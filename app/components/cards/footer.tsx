@@ -3,16 +3,35 @@
 import { useState } from "react";
 
 export default function Footer() {
-  const [status, setStatus] = useState("");
+  const [status, setStatus] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setStatus("Nachricht wird über Funk übermittelt...");
-    
-    // Placeholder for email logic
-    setTimeout(() => {
-      setStatus("Nachricht erfolgreich gesendet! 🕊️");
-    }, 2000);
+    setStatus('Sende...');
+
+    const formData = new FormData(e.currentTarget);
+    const data = {
+      name: formData.get('name'),
+      email: formData.get('email'),
+      message: formData.get('message'),
+    };
+
+    try {
+      const response = await fetch('/api/send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+
+      if (response.ok) {
+        setStatus('Nachricht erfolgreich gesendet!');
+        (e.target as HTMLFormElement).reset();
+      } else {
+        setStatus('Fehler beim Senden. Bitte versuchen Sie es erneut.');
+      }
+    } catch (error) {
+      setStatus('Ein Netzwerkfehler ist aufgetreten.');
+    }
   };
 
   return (
@@ -56,6 +75,7 @@ export default function Footer() {
               <label htmlFor="name" className="block text-xs text-[#e7d8a9] uppercase mb-1 ml-1">Name</label>
               <input 
                 id="name" 
+                name="name"
                 type="text" 
                 required
                 className="w-full bg-black border border-white/10 p-3 rounded text-white focus:border-[#e7d8a9] outline-none transition-colors"
@@ -66,6 +86,7 @@ export default function Footer() {
               <label htmlFor="email" className="block text-xs text-[#e7d8a9] uppercase mb-1 ml-1">Email</label>
               <input 
                 id="email" 
+                name="email"
                 type="email" 
                 required
                 className="w-full bg-black border border-white/10 p-3 rounded text-white focus:border-[#e7d8a9] outline-none transition-colors"
@@ -76,6 +97,7 @@ export default function Footer() {
               <label htmlFor="message" className="block text-xs text-[#e7d8a9] uppercase mb-1 ml-1">Anliegen</label>
               <textarea 
                 id="message" 
+                name="message"
                 rows={4} 
                 required
                 className="w-full bg-black border border-white/10 p-3 rounded text-white focus:border-[#e7d8a9] outline-none transition-colors resize-none"
