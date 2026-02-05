@@ -7,20 +7,20 @@ export default function Footer() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setStatus('Sende...');
-    
+
     const formData = new FormData(e.currentTarget);
-    
+
     // Add your public access key (from Web3Forms dashboard – it's safe here)
-    formData.append('access_key', 'YOUR_REAL_ACCESS_KEY_HERE');  // ← PASTE IT EXACTLY
-    
+    formData.append('access_key', '0ebaee82-9c6d-42c0-b6a6-81821f2af4de');  // ← PASTE IT EXACTLY
+
     try {
       const response = await fetch('https://api.web3forms.com/submit', {  // ← CHANGED THIS LINE
         method: 'POST',
         body: formData,
       });
-    
+
       const result = await response.json();
-    
+
       if (result.success) {
         setStatus('Nachricht erfolgreich gesendet!');
         e.currentTarget.reset();
