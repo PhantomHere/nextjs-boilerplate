@@ -9,51 +9,44 @@ export default function Footer() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setStatus('Sende...');
-    
+
     const formElement = e.currentTarget;
-    
-    // Manually get values (safest way — avoids FormData quirks in React)
-    const name = (formElement.elements.namedItem('name') as HTMLInputElement)?.value || '';
-    const email = (formElement.elements.namedItem('email') as HTMLInputElement)?.value || '';
-    const message = (formElement.elements.namedItem('message') as HTMLTextAreaElement)?.value || '';
-    
-    if (!name || !email || !message) {
-      setStatus('Bitte alle Felder ausfüllen.');
-      return;
-    }
-  
-    const formData = new FormData();
-    formData.append('access_key', '0ebaee82-9c6d-42c0-b6a6-81821f2af4de');
-    formData.append('name', name);
-    formData.append('email', email);
-    formData.append('message', message);
-  
-    // Turnstile token
+    const formData = new FormData(formElement);
+
+    // Get Turnstile token — but DON'T send it
     const token = (window as any).turnstile?.getResponse();
-  
-    if (!token) {
-      setStatus('Verifizierung läuft... Bitte warten oder neu laden.');
-      return;
+
+    // log if token was generated
+    if (token) {
+      console.log('Turnstile token generated (not sent):', token);
+    } else {
+      console.log('No Turnstile token — continuing anyway');
     }
-  
-    formData.append('cf-turnstile-response', token);
-  
-    // Debug: log what we're sending
+
+    // Do NOT append cf-turnstile-response — avoids Pro feature error
+
+    formData.append('access_key', '0ebaee82-9c6d-42c0-b6a6-81821f2af4de');
+
+    // Debug: show what's being sent
     console.log('Sending to Web3Forms:');
     for (const [key, value] of formData.entries()) {
       console.log(`${key}: ${value}`);
     }
-  
+
     try {
       const response = await fetch('https://api.web3forms.com/submit', {
         method: 'POST',
         body: formData,
       });
-    
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
       const result = await response.json();
-    
-      console.log('Web3Forms full response:', result);  // ← log this too
-    
+
+      console.log('Web3Forms full response:', result);
+
       if (result.success) {
         setStatus('Nachricht erfolgreich gesendet!');
         formElement.reset();
