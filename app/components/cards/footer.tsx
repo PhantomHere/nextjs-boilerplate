@@ -118,9 +118,6 @@ export default function Footer() {
               />
             </div>
 
-            {/* Optional honeypot for spam (hidden from humans, bots fill it) */}
-            {/* <input type="text" name="botcheck" className="hidden" /> */}
-
             <button
               type="submit"
               className="w-full bg-[#e7d8a9] text-black py-4 rounded font-bold hover:bg-white transition-all transform active:scale-95"
