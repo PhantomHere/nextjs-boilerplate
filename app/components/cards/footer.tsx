@@ -86,18 +86,45 @@ export default function Footer() {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label htmlFor="name" className="block text-xs text-[#e7d8a9] uppercase mb-1 ml-1">Name</label>
-              <input id="name" name="name" type="text" required className="..." placeholder="Ihr Name" />
+              <input
+                id="name"
+                name="name"
+                type="text"
+                required
+                className="w-full bg-black border border-white/10 p-3 rounded text-white focus:border-[#e7d8a9] outline-none transition-colors"
+                placeholder="Ihr Name"
+              />
             </div>
             <div>
               <label htmlFor="email" className="block text-xs text-[#e7d8a9] uppercase mb-1 ml-1">Email</label>
-              <input id="email" name="email" type="email" required className="..." placeholder="name@beispiel.de" />
+              <input
+                id="email"
+                name="email"
+                type="email"
+                required
+                className="w-full bg-black border border-white/10 p-3 rounded text-white focus:border-[#e7d8a9] outline-none transition-colors"
+                placeholder="name@beispiel.de"
+              />
             </div>
             <div>
               <label htmlFor="message" className="block text-xs text-[#e7d8a9] uppercase mb-1 ml-1">Anliegen</label>
-              <textarea id="message" name="message" rows={4} required className="..." placeholder="Bitte schreiben Sie Nachrichten sorgfältig..." />
+              <textarea
+                id="message"
+                name="message"
+                rows={4}
+                required
+                className="w-full bg-black border border-white/10 p-3 rounded text-white focus:border-[#e7d8a9] outline-none transition-colors resize-none"
+                placeholder="Ihre Nachricht an uns..."
+              />
             </div>
 
-            <button type="submit" className="...">
+            {/* Optional honeypot for spam (hidden from humans, bots fill it) */}
+            {/* <input type="text" name="botcheck" className="hidden" /> */}
+
+            <button
+              type="submit"
+              className="w-full bg-[#e7d8a9] text-black py-4 rounded font-bold hover:bg-white transition-all transform active:scale-95"
+            >
               NACHRICHT ÜBERMITTELN
             </button>
 
