@@ -4,31 +4,26 @@ import { useState } from "react";
 import Script from "next/script";
 
 export default function Footer() {
-  const [status, setStatus] = useState('');
+    const [status, setStatus] = useState('');
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setStatus('Sende...');
 
     const formElement = e.currentTarget;
     const formData = new FormData(formElement);
 
-    // Get Turnstile token if widget loaded
+    // Grab Turnstile token
     const token = (window as any).turnstile?.getResponse();
 
     if (!token) {
-      setStatus('Verifizierung läuft... Bitte warten oder Seite neu laden.');
+      setStatus('Verifizierung läuft... Bitte warten oder neu laden.');
       return;
     }
 
-    formData.append('cf-turnstile-response', token); // Send token to Web3Forms
+    formData.append('cf-turnstile-response', token);
 
     formData.append('access_key', '0ebaee82-9c6d-42c0-b6a6-81821f2af4de');
-
-    console.log('Sending to Web3Forms:');
-    for (const [key, value] of formData.entries()) {
-      console.log(`${key}: ${value}`);
-    }
 
     try {
       const response = await fetch('https://api.web3forms.com/submit', {
