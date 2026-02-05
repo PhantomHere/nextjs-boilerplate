@@ -25,6 +25,11 @@ export default function Footer() {
 
     formData.append('access_key', '0ebaee82-9c6d-42c0-b6a6-81821f2af4de');
 
+    console.log('Sending to Web3Forms:');
+    for (const [key, value] of formData.entries()) {
+      console.log(`${key}: ${value}`);
+    }
+
     try {
       const response = await fetch('https://api.web3forms.com/submit', {
         method: 'POST',
