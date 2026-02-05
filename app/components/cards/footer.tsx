@@ -4,26 +4,31 @@ import { useState } from "react";
 import Script from "next/script";
 
 export default function Footer() {
-    const [status, setStatus] = useState('');
+  const [status, setStatus] = useState('');
 
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setStatus('Sende...');
 
     const formElement = e.currentTarget;
     const formData = new FormData(formElement);
 
-    // Grab Turnstile token
+    // Get Turnstile token if widget loaded
     const token = (window as any).turnstile?.getResponse();
 
     if (!token) {
-      setStatus('Verifizierung läuft... Bitte warten oder neu laden.');
+      setStatus('Verifizierung läuft... Bitte warten oder Seite neu laden.');
       return;
     }
 
-    formData.append('cf-turnstile-response', token);
+    formData.append('cf-turnstile-response', token); // Send token to Web3Forms
 
     formData.append('access_key', '0ebaee82-9c6d-42c0-b6a6-81821f2af4de');
+
+    console.log('Sending to Web3Forms:');
+    for (const [key, value] of formData.entries()) {
+      console.log(`${key}: ${value}`);
+    }
 
     try {
       const response = await fetch('https://api.web3forms.com/submit', {
@@ -89,7 +94,7 @@ export default function Footer() {
         </div>
 
         {/* Form */}
-        <div className="bg-zinc-900/50 p-8 rounded-xl border border-white/5 cf-turnstile" data-sitekey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}>
+        <div className="bg-zinc-900/50 p-8 rounded-xl border border-white/5">
           <h3 className="text-white text-xl font-bold mb-6">Fluglogbuch: Nachricht senden</h3>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
