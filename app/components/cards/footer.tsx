@@ -21,7 +21,7 @@ export default function Footer() {
       return;
     }
 
-    formData.append('cf-turnstile-response', token); // Send token to Web3Forms
+    //formData.append('cf-turnstile-response', token); // Send token to Web3Forms
 
     formData.append('access_key', '0ebaee82-9c6d-42c0-b6a6-81821f2af4de');
 
