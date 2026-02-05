@@ -11,10 +11,18 @@ export default function Footer() {
 
     const formElement = e.currentTarget;
 
-    // Manually grab values (reliable in React)
-    const name = (formElement.elements.namedItem('name') as HTMLInputElement)?.value || '';
-    const email = (formElement.elements.namedItem('email') as HTMLInputElement)?.value || '';
-    const message = (formElement.elements.namedItem('message') as HTMLTextAreaElement)?.value || '';
+    // Honeypot check (hidden field — bots fill it, humans don't)
+    const honeypot = (formElement.elements.namedItem('honeypot') as HTMLInputElement)?.value || '';
+    if (honeypot) {
+      setStatus('Spam erkannt – Nachricht nicht gesendet.');
+      console.log('Honeypot filled — likely bot');
+      return;
+    }
+
+    // Manually grab values
+    const name = (formElement.elements.namedItem('name') as HTMLInputElement)?.value.trim() || '';
+    const email = (formElement.elements.namedItem('email') as HTMLInputElement)?.value.trim() || '';
+    const message = (formElement.elements.namedItem('message') as HTMLTextAreaElement)?.value.trim() || '';
 
     if (!name || !email || !message) {
       setStatus('Bitte alle Felder ausfüllen.');
@@ -26,7 +34,13 @@ export default function Footer() {
     formData.append('name', name);
     formData.append('email', email);
     formData.append('message', message);
-    formData.append('subject', `Neue Nachricht von ${name} (${email})`);
+    formData.append('subject', `Neue Anfrage von ${name} (${email})`);
+
+    // Debug: log payload (remove after testing)
+    console.log('Sending to Web3Forms:');
+    for (const [key, value] of formData.entries()) {
+      console.log(`${key}: ${value}`);
+    }
 
     try {
       const response = await fetch('https://api.web3forms.com/submit', {
@@ -36,16 +50,17 @@ export default function Footer() {
 
       const result = await response.json();
 
+      console.log('Web3Forms response:', result); // ← shows exact error message
+
       if (result.success) {
         setStatus('Nachricht erfolgreich gesendet!');
         formElement.reset();
       } else {
-        console.error('Web3Forms error:', result);
-        setStatus('Fehler beim Senden. Bitte versuchen Sie es erneut.');
+        setStatus('Fehler: ' + (result.message || 'Service-Fehler. Bitte später versuchen.'));
       }
     } catch (error) {
       console.error('Fetch failed:', error);
-      setStatus('Ein Netzwerkfehler ist aufgetreten.');
+      setStatus('Netzwerkfehler – bitte Internet prüfen oder später versuchen.');
     }
   };
 
@@ -117,6 +132,9 @@ export default function Footer() {
                 placeholder="Ihre Nachricht an uns..."
               />
             </div>
+
+            {/* Honeypot — hidden from humans, bots fill it */}
+            <input type="text" name="honeypot" className="hidden" aria-hidden="true" />
 
             <button
               type="submit"
